@@ -1,0 +1,22 @@
+{
+  "name": "exRate_spider",
+  "version": "0.0.0",
+  "description": "",
+  "main": "exRate.js",
+  "dependencies": {
+    "bluebird": "^2.10.1",
+    "cheerio": "^0.19.0",
+    "co": "^4.6.0",
+    "moment": "^2.10.6",
+    "mongodb": "^2.0.43",
+    "mongoskin": "^2.0.0",
+    "nodestalker": "^0.1.18",
+    "request-promise": "^0.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD"
+}
