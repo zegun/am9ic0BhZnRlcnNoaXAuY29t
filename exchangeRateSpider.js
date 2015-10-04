@@ -24,12 +24,12 @@ if (!module.parent) {
     notifyWorkers(options);
 }
 
-function notifyWorkers(options){
+function notifyWorkers(options) {
 	if(process.argv[2] == 'producer') {
 		// run producer worker
 		// sudo node --harmony-generators exchangeRateSpider.js producer
 		_produceSeed(options);
-	} else if(process.argv[2] == 'consumer'){
+	} else if(process.argv[2] == 'consumer') {
 		// run consumer worker
 		// sudo node --harmony-generators exchangeRateSpider.js consumer
 		_consumeSeed(options);
@@ -52,13 +52,13 @@ function _produceSeed(options){
 }
 
 //consume Seed
-function _consumeSeed(options){
-	options.beansClient.watch("zegun").onSuccess(function(data){
+function _consumeSeed(options) {
+	options.beansClient.watch("zegun").onSuccess(function(data) {
 		options.beansClient.reserve().onSuccess(function(job) {
 			co(function* () {
 				var result = yield _getExRate(options,JSON.parse(job.data));
 				return result;
-			}).then(function(html){
+			}).then(function(html) {
 				$ = cheerio.load(html);
 				if($(".rightCol") && $(".rightCol").length > 0 && $(".rightCol").eq(0).text()) {
 					var rate = $(".rightCol").eq(0).text().split(" ")[0];
@@ -86,7 +86,7 @@ function _consumeSeed(options){
 							options.beansClient.put(job.data).onSuccess(function(data) {
 							    console.log(data);
 							});
-							setTimeout(function(){
+							setTimeout(function() {
 								return _consumeSeed(options);
 							},1000*60);
 						}
@@ -98,14 +98,14 @@ function _consumeSeed(options){
 		    	options.beansClient.deleteJob(job.id).onSuccess(function(del_msg) {
 		            console.log('deleted', job);
 		        });
-			},function(error){
+			},function(error) {
 				console.log("error:"+error);
 				fail_count ++;
 		    	if(fail_count < 3) {
 					options.beansClient.put(job.data).onSuccess(function(data) {
 					    console.log(data);
 					});
-					setTimeout(function(){
+					setTimeout(function() {
 						return _consumeSeed(options);
 					},1000*3);
 		    	} else {
@@ -122,22 +122,22 @@ function _consumeSeed(options){
 }
 
 // get Exchange Rate
-function _getExRate(jobObj){
-	return new Promise(function(resolve, reject){
+function _getExRate(jobObj) {
+	return new Promise(function(resolve, reject) {
 		rp('http://www.xe.com/currencyconverter/convert/?Amount=1&From='+jobObj.from+'&To='+jobObj.to).then(function(html){
 			return resolve(html);
-		}).error(function(e){
+		}).error(function(e) {
 			return reject(e);
-		}) ;
+		});
 	});
 }
 
 
 // save result into mongo db
-function saveMongo(options,data,callback){
+function saveMongo(options,data,callback) {
 	var collection = options.mongodb.collection("exchangeRate"); 
 	console.log("To save into Mongo db");
-	collection.save(data,function(err,saveObj){
+	collection.save(data,function(err,saveObj) {
 		if(!err) {
 			console.log("save successfully");
 		} else {
